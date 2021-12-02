@@ -1,16 +1,22 @@
 //Here we go!!
 
-const data = "day1-data.txt";
-var arr = [];
-var count = 0;
+const input = 'day1-data.txt';
 
-fetch (data)
-  .then(txt => txt.text())
-  .then(str => arr = str.split("\n"));
-
-//Cut 2 bc the last value in arr is blank
-for (let i = 1; i < arr.length - 2; i++) {
-  if (arr[i] > arr[i - 1]) count++;
+async function parseData() {
+  let file = await fetch(input);
+  let str = await file.text();
+  let arr = str.split('\n');
+  return arr;
 }
 
-console.log("Result: " + count);
+async function findIncCount() {
+  let dataArr = await parseData();
+  let count = 0;
+  //last value in arr is blank
+  for (let i = 1; i < dataArr.length - 2; i++) {
+    if (dataArr[i] > dataArr[i - 1]) count++;
+  }
+  return count;
+}
+
+findIncCount().then(console.log);
