@@ -5,7 +5,7 @@ const input = 'https://raw.githubusercontent.com/LarkDiet/aoc-2021/main/day-3/da
 async function parseData() {
   let file = await fetch(input);
   let str = await file.text();
-  let arr = str.split('\n');
+  let arr = str.split('\n').filter(l => l);
   return arr;
 }
 
@@ -17,7 +17,7 @@ async function findPowerCons() {
   for (let i = 0; i < bitLen; i++) {
     let count0 = 0;
     let count1 = 0;
-    for (let a = 0; a < dataArr.length - 1; a++) {
+    for (let a = 0; a < dataArr.length; a++) {
       if ((dataArr[a])[i] == 0) count0++;
       else count1++;
     }
@@ -35,7 +35,7 @@ async function findOxGen() {
   for (let i = 0; i < bitLen; i++) {
     let count0 = 0;
     let count1 = 0;
-    for (let a = 0; a < ox.length - 1; a++) {
+    for (let a = 0; a < ox.length; a++) {
       if ((ox[a])[i] == 0) count0++;
       else count1++;
     }
@@ -43,7 +43,7 @@ async function findOxGen() {
     else ox = ox.filter(v => v[i] == 1);
     if (ox.length == 1) break;
   }
-  return parseInt(ox.join(''), 2);
+  return parseInt(ox[0], 2);
 }
 
 async function findCO2() {
@@ -52,7 +52,7 @@ async function findCO2() {
   for (let i = 0; i < bitLen; i++) {
     let count0 = 0;
     let count1 = 0;
-    for (let a = 0; a < co2.length - 1; a++) {
+    for (let a = 0; a < co2.length; a++) {
       if ((co2[a])[i] == 0) count0++;
       else count1++;
     }
@@ -60,7 +60,7 @@ async function findCO2() {
     else co2 = co2.filter(v => v[i] == 0);
     if (co2.length == 1) break;
   }
-  return parseInt(co2.join(''), 2);
+  return parseInt(co2[0], 2);
 }
 
 async function findLifeSup() {
@@ -70,4 +70,4 @@ async function findLifeSup() {
 }
 
 findPowerCons().then(console.log);
-findLifeSup().then(console.log); //Too high??
+findLifeSup().then(console.log);
