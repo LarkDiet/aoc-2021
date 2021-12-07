@@ -50,8 +50,8 @@ async function findWinScore() {
   let currentDraws = drawList.slice(0, 5); //Preload with first 4 nums
   let boards = await createBoards();
   for (let i = 5; i < drawList.length; i++) {
-    //currentDraws.push(drawList[i]);
-    console.log(`Drew ${currentDraws[i]} | Total draws: ${currentDraws.length}`);
+    currentDraws.push(drawList[i]);
+    //console.log(`Drew ${currentDraws[i]} | Total draws: ${currentDraws.length}`);
     for (let b = 0; b < boards.length; b++) {
       if (checkWin(boards[b], currentDraws)) {
       	//console.log("We have a winner!");
