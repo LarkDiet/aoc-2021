@@ -44,7 +44,7 @@ function checkWin(matrix, pool) {
   return false;
 }
 
-async function findWinScore() {
+async function findFirstWinScore() {
   let dataArr = await parseData();
   let drawList = dataArr[0].split(',');
   let currentDraws = drawList.slice(0, 5); //Preload with first 4 nums
@@ -63,4 +63,30 @@ async function findWinScore() {
   return "No winner";
 }
 
-findWinScore().then(console.log);
+async function findWinners() {
+  let dataArr = await parseData();
+  let drawList = dataArr[0].split(',');
+  let currentDraws = drawList.slice(0, 5); //Preload with first 4 nums
+  let boards = await createBoards();
+  let winners = [];
+  for (let i = 5; i < drawList.length; i++) {
+    currentDraws.push(drawList[i]);
+    //console.log(`Drew ${currentDraws[i]} | Total draws: ${currentDraws.length}`);
+    for (let b = 0; b < boards.length; b++) {
+      if (checkWin(boards[b], currentDraws)) {
+      	//console.log("We have a winner!");
+        winners.push(boards[b]);
+      }
+    }
+  }
+  return winners;
+}
+
+async function findLastWinScore(boards, pool) {
+	let winners = await findWinners();
+	let unmarkedSum = winners.slice(-1).flat().filter(v => !pool.includes(v)).map(s => parseInt(s)).reduce((pv, cv) => pv + cv, 0);
+  return unmarkedSum * pool.slice(-1);
+}
+
+findFirstWinScore().then(console.log);
+findLastWinScore().then(console.log);
