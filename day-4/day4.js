@@ -63,29 +63,28 @@ async function findFirstWinScore() {
   return "No winner";
 }
 
-async function findWinners() {
+async function findLastWinScore() {
   let dataArr = await parseData();
   let drawList = dataArr[0].split(',');
   let currentDraws = drawList.slice(0, 5); //Preload with first 4 nums
   let boards = await createBoards();
   let winners = [];
+  let lastWinDraw;
   for (let i = 5; i < drawList.length; i++) {
     currentDraws.push(drawList[i]);
     //console.log(`Drew ${currentDraws[i]} | Total draws: ${currentDraws.length}`);
     for (let b = 0; b < boards.length; b++) {
-      if (checkWin(boards[b], currentDraws)) {
+      if (checkWin(boards[b], currentDraws) && !winners.includes(boards[b])) {
       	//console.log("We have a winner!");
         winners.push(boards[b]);
+        lastWinDraw = currentDraws[i];
       }
     }
   }
-  return winners;
-}
-
-async function findLastWinScore(boards, pool) {
-	let winners = await findWinners();
-	let unmarkedSum = winners.slice(-1).flat().filter(v => !pool.includes(v)).map(s => parseInt(s)).reduce((pv, cv) => pv + cv, 0);
-  return unmarkedSum * pool.slice(-1);
+  let pool = currentDraws.slice(0, currentDraws.indexOf(lastWinDraw) + 1);
+  console.log(winners);
+  let unmarkedSum = winners.slice(-1).flat(Infinity).filter(v => !pool.includes(v)).map(s => parseInt(s)).reduce((pv, cv) => pv + cv, 0);
+  return unmarkedSum * lastWinDraw;
 }
 
 findFirstWinScore().then(console.log);
