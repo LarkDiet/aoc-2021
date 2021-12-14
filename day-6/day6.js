@@ -1,7 +1,6 @@
 //Day 6
 
-//const input = 'https://raw.githubusercontent.com/LarkDiet/aoc-2021/main/day-6/day6-data.txt';
-const input = 'https://raw.githubusercontent.com/LarkDiet/aoc-2021/main/day-6/sample-data.txt';
+const input = 'https://raw.githubusercontent.com/LarkDiet/aoc-2021/main/day-6/day6-data.txt';
 
 async function parseData() {
   let file = await fetch(input);
@@ -10,22 +9,18 @@ async function parseData() {
   return arr;
 }
 
-//This crashes when running the real data test lmao
-async function findFishAfterDays(days) {
+async function findFishAfter(days) {
   let fishArr = await parseData();
-  let newFish = [];
-	for (let i = 0; i < days; i++) {
-  	fishArr = fishArr.map(v => {
-    	if (v == 0) {
-      	newFish.push(8);
-        return 6;
-      } else return v - 1;
-    })
-    fishArr = fishArr.concat(newFish);
-    newFish = [];
-    console.log(fishArr);
+  let breedGrps = Array(9).fill(0);
+  for (let fish of fishArr) breedGrps[fish] += 1;
+  let newFish;
+  for (let i = 0; i < days; i++) {
+    newFish = breedGrps.shift();
+    breedGrps[6] += newFish;
+    breedGrps.push(newFish);
   }
-  return fishArr.length;
+  return breedGrps.reduce((pv, cv) => pv + cv, 0);
 }
 
-findFishAfterDays(80).then(console.log);
+findFishAfter(80).then(console.log);
+findFishAfter(256).then(console.log);
