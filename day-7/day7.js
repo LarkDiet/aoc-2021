@@ -17,7 +17,7 @@ function median(a) {
 }
 
 function average(arr) {
-	return Math.floor((arr.reduce((pv, cv) => pv + cv, 0) / arr.length));
+  return Math.floor((arr.reduce((pv, cv) => pv + cv, 0) / arr.length));
 }
 
 async function findCheapestAlign() {
@@ -34,15 +34,31 @@ async function findCheapestAlign() {
 async function findCheapestAlign2() {
   let dataArr = await parseData();
   let avg = average(dataArr);
-  console.log(avg);
   let cost = 0;
   let steps;
   for (let pos of dataArr) {
-  	steps = Math.abs(pos - avg);
+    steps = Math.abs(pos - avg);
     cost += (steps * (steps + 1) / 2);
   }
   return cost;
 }
 
+async function findCheapestAlign3() {
+  let dataArr = await parseData();
+  let costArr = [];
+  //For each potential align position, calculate the cost and push to costArr
+  for (let tPos of dataArr) {
+  	let cost = 0;
+  	for (let cPos of dataArr) {
+    	let steps = Math.abs(cPos - tPos);
+      cost += (steps * (steps + 1) / 2);
+    }
+    costArr.push(cost);
+  }
+  return Math.min(...costArr);
+}
+
 findCheapestAlign().then(console.log);
 findCheapestAlign2().then(console.log);
+//alternatively...
+findCheapestAlign3().then(console.log);
