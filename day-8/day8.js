@@ -31,6 +31,20 @@ async function decodeData() {
   for (let i = 0; i < dataArr.length; i++) {
   	let decoder = Array(10).fill('_');
     let idigs = inputs[i].split(' ');
+    decoder[1] = idigs.find(v => v.length == 2);
+    decoder[7] = idigs.find(v => v.length == 3);
+    decoder[4] = idigs.find(v => v.length == 4);
+    decoder[8] = idigs.find(v => v.length == 7);
+    //Next to find: 0, 2, 3, 5, 6, 9
+    //0, 6, 9 have length 6 | 2, 3, 5 have length 5
+    //6 must have only one of 1's chars. 0 and 9 will have both of them.
+    //3 must include both 1's chars. 2 and 5 will only have one of them.
+    //9 must include all 3's chars. 0 will be the remaining length 6.
+    //5 must only have chars included in 6. 2 will be the remaining length 5.
+    decoder[6] = idigs.find(v => v.length == 6 && !v.indexOf(decoder[1]).every(c => v.includes(c)));
+    decoder[3] = idigs.find(v => v.length == 5 && v.indexOf(decoder[1]).every(c => v.includes(c)));
+    decoder[9] = idigs.find(v => v.length == 6 && v.indexOf(decoder[3]).every(c => v.includes(c)));
+    decoder[0] = idigs.find(v => v.length == 6 && v != decoder[6] && v != decoder[9]);
     for (let idig of idigs) {
     	if (ulengths.includes(idig.length)) {
       	switch (idig.length) {
@@ -46,6 +60,8 @@ async function decodeData() {
           case 7:
           	decoder[8] = idig;
             break;
+          case 5:
+          	
           default:
           	break;
         }
