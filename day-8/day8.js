@@ -1,7 +1,6 @@
 //Day 8
 
-//const input = 'https://raw.githubusercontent.com/LarkDiet/aoc-2021/main/day-8/day8-data.txt';
-const input = 'https://raw.githubusercontent.com/LarkDiet/aoc-2021/main/day-8/sample-data.txt';
+const input = 'https://raw.githubusercontent.com/LarkDiet/aoc-2021/main/day-8/day8-data.txt';
 
 async function parseData() {
   let file = await fetch(input);
@@ -41,15 +40,15 @@ async function decodeDataAndSum() {
     //3 must include both 1's chars. 2 and 5 will only have one of them.
     //9 must include all 3's chars. 0 will be the remaining length 6.
     //5 must only have chars included in 6. 2 will be the remaining length 5.
-    decoder[6] = idigs.find(v => v.length == 6 && !v.indexOf(decoder[1]).every(c => v.includes(c)));
-    decoder[3] = idigs.find(v => v.length == 5 && v.indexOf(decoder[1]).every(c => v.includes(c)));
-    decoder[9] = idigs.find(v => v.length == 6 && v.indexOf(decoder[3]).every(c => v.includes(c)));
+    decoder[6] = idigs.find(v => v.length == 6 && !decoder[1].split('').every(c => v.includes(c)));
+    decoder[3] = idigs.find(v => v.length == 5 && decoder[1].split('').every(c => v.includes(c)));
+    decoder[9] = idigs.find(v => v.length == 6 && decoder[3].split('').every(c => v.includes(c)));
     decoder[0] = idigs.find(v => v.length == 6 && v != decoder[6] && v != decoder[9]);
-    decoder[5] = idigs.find(v => v.length == 5 && v.every(c => v.indexOf(decoder[6]).includes(c)));
+    decoder[5] = idigs.find(v => v.length == 5 && v.split('').every(c => decoder[6].includes(c)));
     decoder[2] = idigs.find(v => v.length == 5 && v != decoder[3] && v != decoder[5]);
     //Now odigs can be decoded based on length and contents
     let odigs = outputs[i].split(' ');
-    let displayVal = parseInt(odigs.map(v => decoder.findIndex(d => d.length == v.length && d.every(c => v.includes(c)))).join(''));
+    let displayVal = parseInt(odigs.map(v => decoder.findIndex(d => d.length == v.length && d.split('').every(c => v.includes(c)))).join(''));
     displays.push(displayVal);
   }
   return displays.reduce((pv, cv) => pv + cv, 0);
