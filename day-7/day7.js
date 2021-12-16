@@ -1,6 +1,6 @@
 //Day 7
 
-const input = 'https://raw.githubusercontent.com/LarkDiet/aoc-2021/main/day-7/day7-data.txt';
+const input = 'https://raw.githubusercontent.com/LarkDiet/aoc-2021/main/day-7/sample-data.txt';
 
 async function parseData() {
   let file = await fetch(input);
@@ -47,10 +47,12 @@ async function findCheapestAlign3() {
   let dataArr = await parseData();
   let costArr = [];
   //For each potential align position, calculate the cost and push to costArr
-  for (let tPos of dataArr) {
+  let minPos = Math.min(...dataArr);
+  let maxPos = Math.max(...dataArr);
+  for (let i = minPos; i <= maxPos; i++) {
   	let cost = 0;
   	for (let cPos of dataArr) {
-    	let steps = Math.abs(cPos - tPos);
+    	let steps = Math.abs(cPos - i);
       cost += (steps * (steps + 1) / 2);
     }
     costArr.push(cost);
@@ -58,7 +60,7 @@ async function findCheapestAlign3() {
   return Math.min(...costArr);
 }
 
-findCheapestAlign().then(console.log);
-findCheapestAlign2().then(console.log);
+//findCheapestAlign().then(console.log);
+//findCheapestAlign2().then(console.log);
 //alternatively...
 findCheapestAlign3().then(console.log);
