@@ -43,8 +43,9 @@ async function findBasinsAndProd3() {
   //That are adjacent to the lp or its adjacent branches
   for (let lp of lpArr) {
     let basin = [lp];
-    let hasBranch = true;
-    while (hasBranch) {
+    let hasNew = true;
+    while (hasNew) {
+    	let newGroup = [];
     	for (let yx of basin) {
       	let y = yx[0];
         let x = yx[1];
@@ -53,12 +54,16 @@ async function findBasinsAndProd3() {
         if (![undefined, 9].includes(dataMatrix[y][x + 1])) newBranch.push([y, x + 1]);
         if (![0,9].includes(y)) newBranch.push([y - 1, x]);
       	if (![0, dataMatrix.length - 1].includes(y)) newBranch.push([y + 1, x]);
-        newBranch.filter(coord => !basin.includes(coord));
+        newBranch.filter(coord => !basin.includes(coord) && !newGroup.includes(coord));
+        if (newBranch.length > 0) newGroup = newGroup.concat(newBranch);
       }
+      if (newGroup.length > 0) basin = basin.concat(newGroup);
+      else hasNew = false;
     }
+    basins.push(basin);
   }
-  basins.sort();
-  return basins[0] * basins[1] * basins[2];
+  let bSizes = basins.map(b => b.length).sort();
+  return bSizes[0] * bSizes[1] * bSizes[2];
 }
 
 //riskAndSum().then(console.log);
