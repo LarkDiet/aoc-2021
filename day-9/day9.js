@@ -43,22 +43,26 @@ async function findBasinsAndProd3() {
   //That are adjacent to the lp or its adjacent branches
   for (let lp of lpArr) {
     let basin = [lp];
+    let currentLayer = [lp];
     let hasNew = true;
     while (hasNew) {
-    	let newGroup = [];
-    	for (let yx of basin) {
-      	let y = yx[0];
+      let newLayer = [];
+      for (let yx of currentLayer) {
+        let y = yx[0];
         let x = yx[1];
+        console.log(yx);
         let newBranch = [];
-      	if (![undefined, 9].includes(dataMatrix[y][x - 1])) newBranch.push([y, x - 1]);
+        if (![undefined, 9].includes(dataMatrix[y][x - 1])) newBranch.push([y, x - 1]);
         if (![undefined, 9].includes(dataMatrix[y][x + 1])) newBranch.push([y, x + 1]);
-        if (![0,9].includes(y)) newBranch.push([y - 1, x]);
-      	if (![0, dataMatrix.length - 1].includes(y)) newBranch.push([y + 1, x]);
-        newBranch.filter(coord => !basin.includes(coord) && !newGroup.includes(coord));
-        if (newBranch.length > 0) newGroup = newGroup.concat(newBranch);
+        if (![0, 9].includes(y)) newBranch.push([y - 1, x]);
+        if (![0, dataMatrix.length - 1].includes(y)) newBranch.push([y + 1, x]);
+        newBranch.filter(coord => !basin.includes(coord) && !newLayer.includes(coord));
+        if (newBranch.length > 0) newLayer = newLayer.concat(newBranch);
       }
-      if (newGroup.length > 0) basin = basin.concat(newGroup);
-      else hasNew = false;
+      if (newLayer.length > 0) {
+        basin = basin.concat(newLayer);
+        currentLayer = [...newLayer];
+      } else hasNew = false;
     }
     basins.push(basin);
   }
