@@ -42,6 +42,8 @@ async function findBasinsAndProd3() {
   //Two nines and/or a nine and a matrix edge
   //That are adjacent to the lp or its adjacent branches
   for (let lp of lpArr) {
+  	//Init the basin for this lp
+    //Each loop, only check this layer of linked coords
     let basin = [lp];
     let currentLayer = [lp];
     let hasNew = true;
@@ -50,7 +52,6 @@ async function findBasinsAndProd3() {
       for (let yx of currentLayer) {
         let y = yx[0];
         let x = yx[1];
-        console.log(yx);
         let newBranch = [];
         if (![undefined, 9].includes(dataMatrix[y][x - 1])) newBranch.push([y, x - 1]);
         if (![undefined, 9].includes(dataMatrix[y][x + 1])) newBranch.push([y, x + 1]);
