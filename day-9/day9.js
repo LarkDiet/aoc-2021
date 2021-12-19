@@ -42,20 +42,24 @@ async function findBasinsAndProd3() {
   //Two nines and/or a nine and a matrix edge
   //That are adjacent to the lp or its adjacent branches
   for (let lp of lpArr) {
-    let linkArr = [lp];
-    let hasAdj = true;
-    while (hasAdj) {
-      let linkAdj = linkArr.flatMap(yx => {
-        let ma = [dataMatrix[yx[0]][yx[1] - 1], dataMatrix[yx[0]][yx[1] + 1]].filter(v => v != undefined && v != 9);
-        if (![0, 9].includes(yx[0])) ma.push(dataMatrix[yx[0] - 1][yx[1]]);
-        if (![dataMatrix.length - 1, 9].includes(yx[0])) ma.push(dataMatrix[yx[0] + 1][yx[1]]);
-        return ma;
-      });
-      if (linkAdj.length == 0) hasAdj = false;
-      else linkArr = linkArr.concat(linkAdj);
+    let basin = [lp];
+    let hasBranch = true;
+    while (hasBranch) {
+    	for (let yx of basin) {
+      	let y = yx[0];
+        let x = yx[1];
+        let newBranch = [];
+      	if (![undefined, 9].includes(dataMatrix[y][x - 1])) newBranch.push([y, x - 1]);
+        if (![undefined, 9].includes(dataMatrix[y][x + 1])) newBranch.push([y, x + 1]);
+        if (![0,9].includes(y)) newBranch.push([y - 1, x]);
+      	if (![0, dataMatrix.length - 1].includes(y)) newBranch.push([y + 1, x]);
+        newBranch.filter(coord => !basin.includes(coord));
+      }
     }
-    basins.push(linkArr);
   }
+  basins.sort();
+  return basins[0] * basins[1] * basins[2];
 }
 
-riskAndSum().then(console.log);
+//riskAndSum().then(console.log);
+findBasinsAndProd3().then(console.log);
