@@ -34,13 +34,14 @@ async function riskAndSum() {
 }
 
 const includesArray = (data, arr) => {
-	return data.some(e => Array.isArray(e) && e.every((o, i) => Object.is(arr[i], o)));
+  return data.some(e => Array.isArray(e) && e.every((o, i) => Object.is(arr[i], o)));
 }
 
 async function findBasinsAndProd3() {
   let dataArr = await parseData();
   let dataMatrix = dataArr.map(l => l.split('').map(v => parseInt(v)));
   let lpArr = await findLows();
+  let basins = [];
   for (let lp of lpArr) {
     let basinCoords = [lp];
     let adjCoords = [];
@@ -52,18 +53,19 @@ async function findBasinsAndProd3() {
     if (y != dataMatrix.length - 1) adjCoords.push([y + 1, x]);
     adjCoords = adjCoords.filter(ac => dataMatrix[ac[0]][ac[1]] != 9);
     basinCoords = basinCoords.concat(adjCoords);
-    console.log("Basin for " + lp + ": ");
+    console.log("Initial basin for lp " + lp + ": ");
     console.log(basinCoords);
-    //while (adjCoords != []) {
-    	let newAdjCoords = [];
-    	for (let adjc of adjCoords) {
-      	let adjToAdjCoords = [];
-      	let acy = adjc[0];
+    //Heck loop
+    for (i = 0; i < 5; i++) {
+      let newAdjCoords = [];
+      for (let adjc of adjCoords) {
+        let adjToAdjCoords = [];
+        let acy = adjc[0];
         let acx = adjc[1];
         if (dataMatrix[acy][acx - 1] != undefined) adjToAdjCoords.push([acy, acx - 1]);
-    		if (dataMatrix[acy][acx + 1] != undefined) adjToAdjCoords.push([acy, acx + 1]);
-    		if (acy != 0) adjToAdjCoords.push([acy - 1, acx]);
-    		if (acy != dataMatrix.length - 1) adjToAdjCoords.push([acy + 1, acx]);
+        if (dataMatrix[acy][acx + 1] != undefined) adjToAdjCoords.push([acy, acx + 1]);
+        if (acy != 0) adjToAdjCoords.push([acy - 1, acx]);
+        if (acy != dataMatrix.length - 1) adjToAdjCoords.push([acy + 1, acx]);
         adjToAdjCoords = adjToAdjCoords.filter(ac => !includesArray(newAdjCoords, [ac[0], ac[1]]) && !includesArray(basinCoords, [ac[0], ac[1]]) && dataMatrix[ac[0]][ac[1]] != 9);
         newAdjCoords = newAdjCoords.concat(adjToAdjCoords);
       }
@@ -71,8 +73,15 @@ async function findBasinsAndProd3() {
       console.log("Basin for " + lp + ": ");
       console.log(basinCoords);
       adjCoords = [...newAdjCoords];
-    } 
-  //}
+      console.log("New adj coords: ");
+      console.log(adjCoords);
+      if (adjCoords.length == 0) {
+      	basins.push(basinCoords);
+      	break;
+      }
+    }
+  }
+  console.log("Basins: " + basins.length);
 }
 
 //riskAndSum().then(console.log);
