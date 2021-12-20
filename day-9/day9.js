@@ -37,38 +37,36 @@ async function findBasinsAndProd3() {
   let dataArr = await parseData();
   let dataMatrix = dataArr.map(l => l.split('').map(v => parseInt(v)));
   let lpArr = await findLows();
-  let basins = [];
-  //Coordinates in each basin include those between
-  //Two nines and/or a nine and a matrix edge
-  //That are adjacent to the lp or its adjacent branches
   for (let lp of lpArr) {
-  	//Init the basin for this lp
-    //Each loop, only check this layer of linked coords
-    let basin = [lp];
-    let currentLayer = [lp];
-    let hasNew = true;
-    while (hasNew) {
-      let newLayer = [];
-      for (let yx of currentLayer) {
-        let y = yx[0];
-        let x = yx[1];
-        let newBranch = [];
-        if (![undefined, 9].includes(dataMatrix[y][x - 1])) newBranch.push([y, x - 1]);
-        if (![undefined, 9].includes(dataMatrix[y][x + 1])) newBranch.push([y, x + 1]);
-        if (![0, 9].includes(y)) newBranch.push([y - 1, x]);
-        if (![0, dataMatrix.length - 1].includes(y)) newBranch.push([y + 1, x]);
-        newBranch.filter(coord => !basin.includes(coord) && !newLayer.includes(coord));
-        if (newBranch.length > 0) newLayer = newLayer.concat(newBranch);
+    let basinCoords = [lp];
+    let adjCoords = [];
+    let y = lp[0];
+    let x = lp[1];
+    if (dataMatrix[y][x - 1] != undefined) adjCoords.push([y, x - 1]);
+    if (dataMatrix[y][x + 1] != undefined) adjCoords.push([y, x + 1]);
+    if (y != 0) adjCoords.push([y - 1, x]);
+    if (y != dataMatrix.length - 1) adjCoords.push([y + 1, x]);
+    adjCoords = adjCoords.filter(ac => dataMatrix[ac[0]][ac[1]] != 9);
+    basinCoords = basinCoords.concat(adjCoords);
+    console.log(basinCoords);
+    while (adjCoords != []) {
+    	let newAdjCoords = [];
+    	for (let adjc of adjCoords) {
+      	let adjToAdjCoords = [];
+      	let acy = adjc[0];
+        let acx = adjc[1];
+        if (dataMatrix[y][x - 1] != undefined) adjToAdjCoords.push([y, x - 1]);
+    		if (dataMatrix[y][x + 1] != undefined) adjToAdjCoords.push([y, x + 1]);
+    		if (y != 0) adjToAdjCoords.push([y - 1, x]);
+    		if (y != dataMatrix.length - 1) adjToAdjCoords.push([y + 1, x]);
+        adjToAdjCoords = adjToAdjCoords.filter(ac => !newAdjCoords.includes([ac[0], ac[1]]) && !basinCoords.includes([ac[0], ac[1]]) && dataMatrix[ac[0]][ac[1]] != 9);
+        newAdjCoords = newAdjCoords.concat(adjToAdjCoords);
       }
-      if (newLayer.length > 0) {
-        basin = basin.concat(newLayer);
-        currentLayer = [...newLayer];
-      } else hasNew = false;
-    }
-    basins.push(basin);
+      basinCoords = basinCoords.concat(newAdjCoords);
+      console.log(basinCoords);
+      adjCoords = [...newAdjCoords];
+    } 
   }
-  let bSizes = basins.map(b => b.length).sort();
-  return bSizes[0] * bSizes[1] * bSizes[2];
 }
 
 //riskAndSum().then(console.log);
