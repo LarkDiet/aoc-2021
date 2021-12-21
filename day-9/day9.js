@@ -1,7 +1,6 @@
 //Day 9
 
-//const input = 'https://raw.githubusercontent.com/LarkDiet/aoc-2021/main/day-9/day9-data.txt';
-const input = 'https://raw.githubusercontent.com/LarkDiet/aoc-2021/main/day-9/sample-data.txt';
+const input = 'https://raw.githubusercontent.com/LarkDiet/aoc-2021/main/day-9/day9-data.txt';
 
 async function parseData() {
   let file = await fetch(input);
@@ -42,6 +41,15 @@ async function findBasinsAndProd3() {
   let dataMatrix = dataArr.map(l => l.split('').map(v => parseInt(v)));
   let lpArr = await findLows();
   let basins = [];
+  //For each low point, init a new array of basin coords starting with itself
+  //Then make and concat a temporary array for each adjacent coordinate
+  //Finally, repeat for each coord adjacent to /those/ coords
+  //Until there are no more that meet these conditions:
+  //-Does not collide with coords already in the basin array
+  //-Does not collide with other "adjacent of adjacent" coords
+  //-Does not have a value of 9 in the data matrix
+  //For the sanity of anyone reviewing this, console logs have been left in.
+  //This takes a minute or two to finish on the actual puzzle data input. Enjoy.
   for (let lp of lpArr) {
     let basinCoords = [lp];
     let adjCoords = [];
@@ -56,7 +64,8 @@ async function findBasinsAndProd3() {
     console.log("Initial basin for lp " + lp + ": ");
     console.log(basinCoords);
     //Heck loop
-    for (i = 0; i < 5; i++) {
+    let loop = true;
+    while (loop = true) {
       let newAdjCoords = [];
       for (let adjc of adjCoords) {
         let adjToAdjCoords = [];
@@ -81,7 +90,12 @@ async function findBasinsAndProd3() {
       }
     }
   }
-  console.log("Basins: " + basins.length);
+  for (let basin of basins) console.log(basin);
+  basins.sort((a,b) => b.length - a.length);
+  console.log("Sorted by length descending: ");
+  for (let basin of basins) console.log(basin);
+  console.log("Product of largest 3: ");
+  return (basins[0].length * basins[1].length * basins[2].length);
 }
 
 //riskAndSum().then(console.log);
