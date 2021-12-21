@@ -47,7 +47,7 @@ async function findBasinsAndProd3() {
   //Until there are no more that meet these conditions:
   //-Does not collide with coords already in the basin array
   //-Does not collide with other "adjacent of adjacent" coords
-  //-Does not have a value of 9 in the data matrix
+  //-Does not have a value of 9 or undefined in the data matrix
   //For the sanity of anyone reviewing this, console logs have been left in.
   //This takes a minute or two to finish on the actual puzzle data input. Enjoy.
   for (let lp of lpArr) {
