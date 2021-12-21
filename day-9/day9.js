@@ -64,8 +64,7 @@ async function findBasinsAndProd3() {
     console.log("Initial basin for lp " + lp + ": ");
     console.log(basinCoords);
     //Heck loop
-    let loop = true;
-    while (loop = true) {
+    while (true) {
       let newAdjCoords = [];
       for (let adjc of adjCoords) {
         let adjToAdjCoords = [];
