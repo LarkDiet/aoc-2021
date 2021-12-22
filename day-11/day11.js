@@ -9,7 +9,9 @@ async function parseData() {
   return arr;
 }
 
-function validAdjacentCoords(matrix, y, x) {
+function validAdjacentCoords(matrix, coord) {
+  let y = coord[0];
+  let x = coord[1];
   let arr = [];
   if (matrix[y][x + 1]) arr.push([y, x + 1]);
   if (matrix[y][x - 1]) arr.push([y, x - 1]);
@@ -26,31 +28,65 @@ function validAdjacentCoords(matrix, y, x) {
   return arr;
 }
 
+const includesArray = (data, arr) => {
+  return data.some(e => Array.isArray(e) && e.every((o, i) => Object.is(arr[i], o)));
+}
+
 async function findFlashesAfter(days) {
   let dataArr = await parseData();
   let dataMatrix = dataArr.map(l => l.split('').map(v => parseInt(v)));
   let flashCount = 0;
+  console.log("Day 0:\n\n" + dataMatrix.join('\n'));
   for (let d = 0; d < days; d++) {
     let flashedCoords = [];
-    for (let y = 0; y < dataMatrix.length; y++) {
-      for (let x = 0; x < dataMatrix[y].length; x++) {
-        dataMatrix[y][x] += 1;
-        if (dataMatrix[y][x] > 9) {
-          flashedCoords.push([y, x]);
-          console.log("Octo at " + [y, x] + "flashed!");
-          console.log("Adding 1 to adjacent coords: ");
-          for (let coord of validAdjacentCoords(dataMatrix, y, x)) {
-            console.log(coord);
-            dataMatrix[coord[0]][coord[1]] += 1;
+    dataMatrix = dataMatrix.map((y, yi) => y.map((v, vi) => {
+      if (v == 9) {
+        flashedCoords.push([yi, vi]);
+        return 0;
+      } else return v + 1;
+    }));
+    if (flashedCoords.length > 0) {
+      for (let flash of flashedCoords) {
+        let moreFlashes = [];
+        for (let vac of validAdjacentCoords(dataMatrix, flash)) {
+          if (!includesArray(flashedCoords, vac) && !includesArray(moreFlashes, vac)) {
+            dataMatrix[vac[0]][vac[1]] += 1;
+            if (dataMatrix[vac[0]][vac[1]] > 9) {
+              moreFlashes.push(vac);
+              dataMatrix[vac[0]][vac[1]] = 0;
+            }
+          }
+        }
+        flashedCoords = flashedCoords.concat(moreFlashes);
+        if (moreFlashes.length > 0) {
+          while (true) {
+            let allNewFlashes = [];
+            for (let flash of moreFlashes) {
+              let evenMoreFlashes = [];
+              for (let vac of validAdjacentCoords(dataMatrix, flash)) {
+                if (!includesArray(flashedCoords, vac) && !includesArray(evenMoreFlashes, vac)) {
+                  dataMatrix[vac[0]][vac[1]] += 1;
+                  if (dataMatrix[vac[0]][vac[1]] > 9) {
+                    evenMoreFlashes.push(vac);
+                    dataMatrix[vac[0]][vac[1]] = 0;
+                  }
+                }
+              }
+              allNewFlashes = allNewFlashes.concat(evenMoreFlashes);
+            }
+            flashedCoords = flashedCoords.concat(allNewFlashes);
+            moreFlashes = [...allNewFlashes];
+            if (moreFlashes.length == 0) break;
           }
         }
       }
     }
+    console.log("Day " + (d + 1) + ":\n\n" + dataMatrix.join('\n'));
+    console.log("Octos flashed at: " + flashedCoords.map(fc => "(" + fc + ")"));
     flashCount += flashedCoords.length;
-    for (let fc of flashedCoords)
-      dataMatrix[fc[0]][fc[1]] = 0;
+    console.log("Total flashes over time: " + flashCount);
   }
   return flashCount;
 }
 
-findFlashesAfter(100).then(console.log);
+findFlashesAfter(10).then(console.log);
