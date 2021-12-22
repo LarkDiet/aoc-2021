@@ -1,7 +1,6 @@
 //Day 10
 
-//const input = 'https://raw.githubusercontent.com/LarkDiet/aoc-2021/main/day-10/day10-data.txt';
-const input = 'https://raw.githubusercontent.com/LarkDiet/aoc-2021/main/day-10/sample-data.txt';
+const input = 'https://raw.githubusercontent.com/LarkDiet/aoc-2021/main/day-10/day10-data.txt';
 
 async function parseData() {
   let file = await fetch(input);
@@ -25,13 +24,47 @@ function findIllegalSyntax(line) {
   }
 }
 
+function findMissingChars(line) {
+	let ops = [];
+  let missing = [];
+  for (let ch of line) {
+  	if (openChars.includes(ch)) ops.push(ch);
+    else ops.pop();
+  }
+  for (let ch of ops.reverse()) {
+  	switch (ch) {
+    	case '(':
+      	missing.push(')');
+        break;
+      case '[':
+      	missing.push(']');
+        break;
+      case '{':
+      	missing.push('}');
+        break;
+      case '<':
+      	missing.push('>');
+        break;
+      default:
+      	break;
+    }
+  }
+  return missing;
+}
+
+function median(a) {
+  let arr = a.sort((v1, v2) => v1 - v2);
+  let mid = Math.floor(arr.length / 2);
+  if (arr.length % 2 != 0) return arr[mid];
+  else return ((arr[mid - 1] + arr[mid]) / 2);
+}
+
 async function findIllegalSyntaxScore() {
 	let dataArr = await parseData();
   let illChs = [];
   let score = 0;
   for (let line of dataArr) illChs.push(findIllegalSyntax(line));
   illChs = illChs.filter(v => v);
-  console.log(illChs);
   for (let ch of illChs) {
   	switch (ch) {
     	case ')':
@@ -56,8 +89,33 @@ async function findIllegalSyntaxScore() {
 async function completeCleanDataAndScore() {
 	let dataArr = await parseData();
   let cleanData = dataArr.filter(l => !findIllegalSyntax(l));
-  console.log(cleanData);
+  let compStrings = cleanData.map(l => findMissingChars(l));
+  let scores = [];
+  for (let line of compStrings) {
+  	let score = 0;
+    for (let ch of line) {
+    	score *= 5;
+      switch (ch) {
+      	case ')':
+        	score += 1;
+          break;
+        case ']':
+        	score += 2;
+          break;
+        case '}':
+        	score += 3;
+          break;
+        case '>':
+        	score += 4;
+          break;
+        default:
+        	break;
+      }
+    }
+    scores.push(score);
+  }
+  return median(scores);
 }
 
-//findIllegalSyntaxScore().then(console.log);
+findIllegalSyntaxScore().then(console.log);
 completeCleanDataAndScore().then(console.log);
