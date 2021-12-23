@@ -1,6 +1,8 @@
 //Day 11
+//Idk how this works on pt 2 but it does?? See console logs
 
-const input = 'https://raw.githubusercontent.com/LarkDiet/aoc-2021/main/day-11/sample-data.txt';
+const input = 'https://raw.githubusercontent.com/LarkDiet/aoc-2021/main/day-11/day11-data.txt';
+//const input = 'https://raw.githubusercontent.com/LarkDiet/aoc-2021/main/day-11/sample-data.txt';
 
 async function parseData() {
   let file = await fetch(input);
@@ -36,6 +38,7 @@ async function findFlashesAfter(days) {
   let dataArr = await parseData();
   let dataMatrix = dataArr.map(l => l.split('').map(v => parseInt(v)));
   let flashCount = 0;
+  let prevCount = 0;
   console.log("Day 0:\n\n" + dataMatrix.join('\n'));
   for (let d = 0; d < days; d++) {
     let flashedCoords = [];
@@ -82,11 +85,17 @@ async function findFlashesAfter(days) {
       }
     }
     console.log("Day " + (d + 1) + ":\n\n" + dataMatrix.join('\n'));
-    console.log("Octos flashed at: " + flashedCoords.map(fc => "(" + fc + ")"));
     flashCount += flashedCoords.length;
+    if (flashCount - prevCount == 100) {
+    	console.log("All octos synced! Stopping!");
+      return d + 1;
+    }
+    prevCount = flashCount;
+    console.log("Octos flashed at: " + flashedCoords.map(fc => "(" + fc + ")"));
     console.log("Total flashes over time: " + flashCount);
   }
   return flashCount;
 }
 
-findFlashesAfter(10).then(console.log);
+//findFlashesAfter(100).then(console.log);
+findFlashesAfter(10000).then(console.log);
