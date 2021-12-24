@@ -41,6 +41,12 @@ async function findValidPaths() {
   caveMap.forEach((v,k) => {
   	if (startNodes.includes(k)) paths.push(k);
   })
+  while (true) {
+  	paths.forEach(p => {
+    	let lastStep = p[p.length - 1];
+      let nextSteps = caveMap.get(lastStep).filter(n => n)
+    })
+  }
   
 
 	/*
